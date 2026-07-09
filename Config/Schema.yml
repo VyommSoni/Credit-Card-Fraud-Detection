@@ -1,0 +1,18 @@
+columns:
+  transaction_id: object
+  amount: float
+  transaction_hour: int
+  merchant_category: object
+  foreign_transaction: int
+  device_trust_score: float
+  location_mismatch: int
+  velocity_last_24h: int
+  cardholder_age: int
+  is_fraud: int
+
+target_column: is_fraud
+
+
+data_validation:
+  required_columns_count: 10
+
