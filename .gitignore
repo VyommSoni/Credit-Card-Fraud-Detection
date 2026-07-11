@@ -151,4 +151,8 @@ Data
 
 /artifact
 *.code-workspace
+
 Data
+
+app.py
+src/Pipeline/
