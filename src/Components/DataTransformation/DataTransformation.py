@@ -87,8 +87,8 @@ class DataTransformation:
                       f" Split data into X_train,Y_train,X_test,Y_test and of shape {X_train.shape} {Y_train.shape} {X_test.shape} {Y_test.shape}"
                   )
 
-                  Numerical_cols=[col for col in Train_data.columns if Train_data[col].nunique()>=10 ]
-                  Discrete_cols=[col for col in Train_data.columns if Train_data[col].nunique()<10]
+                  Numerical_cols=[col for col in X_train.columns if X_train[col].nunique()>=10 ]
+                  Discrete_cols=[col for col in X_train.columns if X_train[col].nunique()<10]
 
                   Preprocessor=self.get_transformer_object(
                       num_cols=Numerical_cols,

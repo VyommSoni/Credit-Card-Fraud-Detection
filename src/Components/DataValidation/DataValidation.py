@@ -43,12 +43,11 @@ class DataValidation:
     def check_missing_values(self,dataframe:DataFrame)->bool:
         '''check the missing values in dataframe'''
         try:
-            Dataframe=pd.read_csv(dataframe)
-            if not Dataframe.empty:
-                if Dataframe.isnull().sum().sum()>0:
+            if not dataframe.empty:
+                if dataframe.isnull().sum().sum()>0:
                     logging.info(
 
-                        f"Dataframe contain missing values pls trouble shoot it {Dataframe.isnull().sum().sum()}"
+                        f"Dataframe contain missing values pls trouble shoot it {dataframe.isnull().sum().sum()}"
                     )
                     return False
                 return True
