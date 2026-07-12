@@ -8,7 +8,9 @@ import os
 import sys
 
 class Metric:
-    def __init__(self,y_true,y_pred)->ClassificationMetricArtifact:
+    def __init__(self):
+        pass
+    def calculate_metric(self,y_true,y_pred)->ClassificationMetricArtifact:
         try:
             logging.info(
                 f'calculating model metrics for evaluating model...'
@@ -16,12 +18,14 @@ class Metric:
             f1score=f1_score(y_true,y_pred)
             recallscore=recall_score(y_true,y_pred)
             precisionscore=precision_score(y_true,y_pred)
+            accuracy_score_=accuracy_score(y_true,y_pred)
 
 
             classification_metric_artifact=ClassificationMetricArtifact(
                 f1score=f1score,
                 recall_score=recallscore,
-                precision_score=precisionscore
+                precision_score=precisionscore,
+                accuracy_score=accuracy_score_
 
             )
 

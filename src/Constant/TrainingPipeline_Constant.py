@@ -41,9 +41,8 @@ TRAINED_MODEL_DIR='Trained_model'
 MODEL_PATH='Model.pkl'
 EXPECTED_ACCURACY=0.70
 
-BUCKET_NAME="creditcardfrauddetection2864-3931-6360"
+BUCKET_NAME="frauddetection471165810235"
 
-BASE_MODEL_PATH=os.path.join("Base_model","basemodel.pkl")
 
 DAGSHUB_REPO_OWNER="svyom21"
 DAGSHUB_REPO_NAME="Credit-Card-Fraud-Detection"
@@ -52,6 +51,7 @@ MLFLOW_TRACKING_URI="https://dagshub.com/svyom21/Credit-Card-Fraud-Detection.mlf
 MODEL_WEIGHTAGE=0.6
 BUISSNESS_RULES_WEIGHTAGE=0.4
 SPLIT=5
+best_model_path=os.path.join("Saved_Models","Model.pkl")
 
 
 

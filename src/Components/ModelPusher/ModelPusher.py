@@ -32,7 +32,8 @@ class ModelPusher:
             )
 
             self.s3_estimator.save_model(
-                from_file=self.model_trainer_artifact.BestModelPath
+                from_file=self.model_trainer_artifact.BestModelPath,
+                remove=False
             )
 
             model_pusher_artifact=ModelPusherArtifact(
@@ -40,13 +41,19 @@ class ModelPusher:
                 s3_model_key_path=self.model_pusher_config.s3_model_key_path
             )
 
+            #saving best model locally 
+            model=self.utils.load_object(filepath=self.model_trainer_artifact.BestModelPath)
+            os.makedirs(os.path.dirname(best_model_path),exist_ok=True)
+            self.utils.save_object(filepath=best_model_path,obj=model)
+            
+
             logging.info("Upload the model on s3 ")
 
             logging.info(
                 f" model Pushed artifacts {model_pusher_artifact}"
 
             )
-
+        
 
 
             return model_pusher_artifact

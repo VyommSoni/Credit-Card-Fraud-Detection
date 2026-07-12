@@ -13,9 +13,7 @@ class Rules:
         '''In this we define our rules'''
 
         try:
-            logging.info(
-                " Creating rules and Tranforming data  "
-            )
+            
             score=0
 
             if row["transaction_hour"] in [0, 1, 2, 3]:
@@ -29,7 +27,7 @@ class Rules:
             
             if row["device_trust_score"] < 60:
                     score += 25
-
+        
             return score
         except Exception as e:
             raise CreditCradFraudDetection(e,sys)

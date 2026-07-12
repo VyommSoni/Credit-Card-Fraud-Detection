@@ -51,14 +51,14 @@ class DataIngestion:
             )
             os.makedirs(os.path.dirname(self.data_ingestion_config.feature_store_path),exist_ok=True)
 
-            dataframe.to_csv(self.data_ingestion_config.feature_store_path)
+            dataframe.to_csv(self.data_ingestion_config.feature_store_path,index=False)
 
-            train.to_csv(self.data_ingestion_config.Train_file_path)
-            test.to_csv(self.data_ingestion_config.Test_file_path)
+            train.to_csv(self.data_ingestion_config.Train_file_path,index=False)
+            test.to_csv(self.data_ingestion_config.Test_file_path,index=False)
 
 
             dataingestion_artifact=DataIngestionArtifact(
-                Feature_Store_Path=self.data_ingestion_config.feature_store_path,
+                Feature_Store_PATH=self.data_ingestion_config.feature_store_path,
                 TEST_FILE_PATH=self.data_ingestion_config.Test_file_path,
                 TRAIN_FILE_PATH=self.data_ingestion_config.Train_file_path
             )

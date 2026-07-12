@@ -65,16 +65,16 @@ class DataTransformation:
                  "Initializing the Transformation process.."
              )
 
-              Train_data=self.read_data(self.data_validation_artifact.Valid_train_filepath)
-              Test_data=self.read_data(self.data_validation_artifact.Valid_test_filepath)
+              Train_data=self.read_data(filepath=self.data_validation_artifact.Valid_train_filepath)
+              Test_data=self.read_data(filepath=self.data_validation_artifact.Valid_test_filepath)
 
               if not  Train_data.empty and not Test_data.empty:
                   logging.info(
                       f"Train data shape {Train_data.shape} , Test data shape {Test_data.shape}"
                   )
 
-                  Train_data=Train_data.drop(columns=[COLUMNS_TO_DROP],axis=1)
-                  Test_data=Test_data.drop(columns=[COLUMNS_TO_DROP],axis=1)
+                  Train_data=Train_data.drop(columns=COLUMNS_TO_DROP,axis=1)
+                  Test_data=Test_data.drop(columns=COLUMNS_TO_DROP,axis=1)
 
                   logging.info(
                       f" columns After dropped in train {Train_data.columns} and in test {Test_data.columns}"

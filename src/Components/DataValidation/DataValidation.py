@@ -2,7 +2,7 @@ import os
 import sys
 from src.Constant.TrainingPipeline_Constant import *
 from src.entity.Config_entity import DataValidationConfig,DataIngestionConfig
-from src.entity.Artifact_entity import DataValidationArtifact
+from src.entity.Artifact_entity import DataValidationArtifact,DataIngestionArtifact
 from src.Exception.fraud_exception import CreditCradFraudDetection
 from src.Logging.fraud_logging import logging
 from src.Utility.Utilis.Utility import Utils
@@ -12,8 +12,8 @@ import pandas as pd
 
 class DataValidation:
 
-    def __init__(self,dataingestion_config:DataIngestionConfig,datavalidation_config:DataValidationConfig):
-        self.dataingestion_config=dataingestion_config
+    def __init__(self,data_artifact:DataIngestionArtifact,datavalidation_config:DataValidationConfig):
+        self.data_artifact=data_artifact
         self.datavalidation_config=datavalidation_config
         self.utils=Utils()
 
@@ -72,8 +72,8 @@ class DataValidation:
                 f"Inititating the DataValidation process.."
             )
 
-            Train=self.read_data(filepath=self.dataingestion_config.Train_file_path,index=False)
-            Test=self.read_data(filepath=self.dataingestion_config.Test_file_path,index=False)
+            Train=self.read_data(filepath=self.data_artifact.TRAIN_FILE_PATH)
+            Test=self.read_data(filepath=self.data_artifact.TEST_FILE_PATH)
 
             Validation_Status=False
 
@@ -84,8 +84,8 @@ class DataValidation:
                         f"Validated Train and Test columns"
                     )
                     os.makedirs(os.path.dirname(self.datavalidation_config.valid_train_filepath),exist_ok=True)
-                    Train.to_csv(self.datavalidation_config.valid_train_filepath)
-                    Test.to_csv(self.datavalidation_config.valid_test_filepath)
+                    Train.to_csv(self.datavalidation_config.valid_train_filepath,index=False)
+                    Test.to_csv(self.datavalidation_config.valid_test_filepath,index=False)
 
 
                 else:
@@ -103,7 +103,7 @@ class DataValidation:
                      Invalid_train_filepath=self.datavalidation_config.invalid_train_filepath,
                      Invalid_test_filepath=self.datavalidation_config.invalid_test_filepath,
                      Valid_train_filepath=self.datavalidation_config.valid_train_filepath,
-                     Valid_test_filepath=self.datavalidation_config.invalid_test_filepath
+                     Valid_test_filepath=self.datavalidation_config.valid_test_filepath
 
                 )
                 return datavalidation_artifact

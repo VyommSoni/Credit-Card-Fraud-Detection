@@ -2,7 +2,7 @@ from src.Configuration.S3_Connection import S3
 from io import StringIO
 from typing import Union,List
 import os,sys
-from src.Logging import logging
+from src.Logging.fraud_logging import logging
 from mypy_boto3_s3.service_resource import Bucket
 from src.Exception.fraud_exception import CreditCradFraudDetection
 from botocore.exceptions import ClientError
@@ -14,10 +14,11 @@ class SimpleStorageService:
 
     def __init__(self):
         s3_client = S3()
-        self.s3_resource = s3_client.s3_resource
-        self.s3_client = s3_client.s3_client
+        self.s3_resource = s3_client.resource
+        self.s3_client = s3_client.S3_client
 
     def s3_key_path_available(self,bucket_name,s3_key)->bool:
+        
         try:
             bucket = self.get_bucket(bucket_name)
             file_objects = [file_object for file_object in bucket.objects.filter(Prefix=s3_key)]
@@ -30,28 +31,26 @@ class SimpleStorageService:
         
         
 
-    @staticmethod
-    def read_object(object_name: str, decode: bool = True, make_readable: bool = False) -> Union[StringIO, str]:
+   
+    def read_object(self, object_name: str, bucket_name: str, decode: bool = True, make_readable: bool = False) -> Union[StringIO, str]:
         """
         Method Name :   read_object
-        Description :   This method reads the object_name object with kwargs
-
-        Output      :   The column name is renamed
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
+        Description :   Safely fetches and reads an object from a specified S3 bucket.
         """
-        logging.info("Entered the read_object method of S3Operations class")
+        logging.info("Entered the read_object method of SimpleStorageService class")
 
         try:
+            # ☁️ Use self.s3_client to fetch the real object binary matrix from AWS S3
+            response = self.s3_client.get_object(Bucket=bucket_name, Key=object_name)
+
             func = (
-                lambda: object_name.get()["Body"].read().decode()
+                lambda: response["Body"].read().decode()
                 if decode is True
-                else object_name.get()["Body"].read()
+                else response["Body"].read()
             )
+            
             conv_func = lambda: StringIO(func()) if make_readable is True else func()
-            logging.info("Exited the read_object method of S3Operations class")
+            logging.info("Exited the read_object method of SimpleStorageService class")
             return conv_func()
 
         except Exception as e:
@@ -108,15 +107,9 @@ class SimpleStorageService:
     def load_model(self, model_name: str, bucket_name: str, model_dir: str = None) -> object:
         """
         Method Name :   load_model
-        Description :   This method loads the model_name model from bucket_name bucket with kwargs
-
-        Output      :   list of objects or object is returned based on filename
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
+        Description :   Finds the file path, calls read_object, and unpickles the ML model
         """
-        logging.info("Entered the load_model method of S3Operations class")
+        logging.info("Entered the load_model method of SimpleStorageService class")
 
         try:
             func = (
@@ -124,11 +117,17 @@ class SimpleStorageService:
                 if model_dir is None
                 else model_dir + "/" + model_name
             )
-            model_file = func()
-            file_object = self.get_file_object(model_file, bucket_name)
-            model_obj = self.read_object(file_object, decode=False)
-            model = pickle.loads(model_obj)
-            logging.info("Exited the load_model method of S3Operations class")
+            model_file_key = func() # e.g., "model/model.pkl"
+            
+            # 🔄 Notice how we pass "self.read_object" and feed it the clean string path
+            model_binary_bytes = self.read_object(
+                object_name=model_file_key, 
+                bucket_name=bucket_name, 
+                decode=False
+            )
+            
+            model = pickle.loads(model_binary_bytes)
+            logging.info("Exited the load_model method of SimpleStorageService class")
             return model
 
         except Exception as e:

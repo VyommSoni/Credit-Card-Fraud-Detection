@@ -34,8 +34,7 @@ class ModelTrainer:
             logging.info("Initializing MLflow and Dagshub tracking backend...")
             dagshub.init(
                 repo_owner=DAGSHUB_REPO_OWNER, 
-                repo_name=DAGSHUB_REPO_NAME, 
-                signup_with_google=False
+                repo_name=DAGSHUB_REPO_NAME
             )
             mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
             mlflow.set_experiment("Hybrid_Stacking_Fraud_Engine")
@@ -76,13 +75,13 @@ class ModelTrainer:
                 mlflow.log_param("hybrid_blend_ratio", "60_AI_40_Rules")
 
                 # Track metrics for the Training Dataset
-                mlflow.log_metric("train_accuracy", train_metric.accuracy)
+                mlflow.log_metric("train_accuracy", train_metric.accuracy_score)
                 mlflow.log_metric("train_f1_score", train_metric.f1score)
                 mlflow.log_metric("train_precision", train_metric.precision_score)
                 mlflow.log_metric("train_recall", train_metric.recall_score)
 
                 # Track metrics for the Validation Test Dataset
-                mlflow.log_metric("test_accuracy", test_metric.accuracy)
+                mlflow.log_metric("test_accuracy", test_metric.accuracy_score)
                 mlflow.log_metric("test_f1_score", test_metric.f1score)
                 mlflow.log_metric("test_precision", test_metric.precision_score)
                 mlflow.log_metric("test_recall", test_metric.recall_score)
@@ -137,8 +136,9 @@ class ModelTrainer:
                     logging.info(f"Target score criteria satisfied: {best_model_score}")
                     
                     # Generate metrics using my project's custom Metric component wrapper
-                    Train_metric = Metric(y_true=Y_train, y_pred=y_train_pred)
-                    Test_metric = Metric(y_true=Y_test, y_pred=y_test_pred)
+                    metric=Metric()
+                    Train_metric = metric.calculate_metric(y_true=Y_train, y_pred=y_train_pred)
+                    Test_metric = metric.calculate_metric(y_true=Y_test, y_pred=y_test_pred)
 
                     # 9. Pack everything together inside your custom FraudModel container
                     preprocessor = self.utils.load_object(filepath=self.data_transformation_artifact.Preprocessor_Path)

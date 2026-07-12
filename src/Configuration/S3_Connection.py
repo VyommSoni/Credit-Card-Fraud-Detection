@@ -27,12 +27,13 @@ class S3:
                 if __secret_access_key is None:
                     raise Exception (f"Environment varaible {__secret_access_key} is not set")
                 
-            S3.S3_client=boto3.client(
+                S3.S3_client=boto3.client(
+                    's3',
                  aws_access_key_id=__aws_access_key,
                  aws_secret_access_key=__secret_access_key,
                  region_name=Region_name)
             
-            S3.resource=boto3.resource(
+                S3.resource=boto3.resource('s3',
                 aws_access_key_id=__aws_access_key,
                                  aws_secret_access_key=__secret_access_key,
                                  region_name=Region_name)

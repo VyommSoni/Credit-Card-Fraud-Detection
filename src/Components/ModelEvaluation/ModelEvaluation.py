@@ -74,7 +74,8 @@ class ModelEvaluation:
                      if best_model is not None:
                          y_hat=best_model.Predict(X_test)
                          production_model_f1_score=f1_score(Y_test,y_hat)
-                         production_model_artifact=Metric(y_true=Y_test,y_pred=y_hat)
+                         metric=Metric()
+                         production_model_artifact=metric.calculate_metric(y_true=Y_test,y_pred=y_hat)
     
                      tmp_best_model_score=0 if production_model_f1_score is None else production_model_f1_score
     
@@ -92,7 +93,7 @@ class ModelEvaluation:
                      )
     
                      return model_evaluation_artifact
-                #Test Git
+             
                 
             except Exception as e:
                 raise CreditCradFraudDetection(e,sys)
