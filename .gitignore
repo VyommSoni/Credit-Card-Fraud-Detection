@@ -145,12 +145,13 @@ test.ipynb
 
 #dataset
 env
-Data
+
 
 #artifact files
 
 /artifact
 *.code-workspace
 
-Data
 
+
+/Data
