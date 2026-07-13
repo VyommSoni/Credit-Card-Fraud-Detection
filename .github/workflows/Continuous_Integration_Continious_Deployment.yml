@@ -1,0 +1,44 @@
+# Take boilerplate from github and adjust it usign our needs that's how we do.....
+
+name: Build and Push to Amazon ECR & Deploy to EC2
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  AWS_REGION: us-east-1                   
+  ECR_REPOSITORY: creditcardfraudrepo      
+  IMAGE_TAG: latest
+
+permissions:
+  contents: read
+
+jobs:
+  # ================= CI STAGE: BUILD & PUSH =================
+  build-and-push:
+    name: Build and Push
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
