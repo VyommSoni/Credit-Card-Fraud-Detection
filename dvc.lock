@@ -1,0 +1,75 @@
+schema: '2.0'
+stages:
+  DataIngestion:
+    cmd: python src\Components\DataIngestion\DataIngestion.py
+    deps:
+    - path: src\Components\DataIngestion\DataIngestion.py
+      hash: md5
+      md5: 71caf8be52113b6f29f07e89b2ef9e17
+      size: 3163
+    outs:
+    - path: Artifacts/
+      hash: md5
+      md5: 5d6aa93d839b9b26ca84df9eb28c0448.dir
+      size: 741207
+      nfiles: 3
+  DataValidation:
+    cmd: python src\Components\DataValidation\DataValidation.py
+    deps:
+    - path: Artifacts/
+      hash: md5
+      md5: 5d6aa93d839b9b26ca84df9eb28c0448.dir
+      size: 741207
+      nfiles: 3
+    - path: src\Components\DataValidation\DataValidation.py
+      hash: md5
+      md5: 193c179a358b97961f6c3e5da0434ad1
+      size: 4888
+  DataTransformation:
+    cmd: python src\Components\DataTransformation\DataTransformation.py
+    deps:
+    - path: Artifacts/
+      hash: md5
+      md5: 5d6aa93d839b9b26ca84df9eb28c0448.dir
+      size: 741207
+      nfiles: 3
+    - path: src\Components\DataTransformation\DataTransformation.py
+      hash: md5
+      md5: f0240cf1ed4d2e60162e0f09d01e097d
+      size: 6047
+  ModelTrainer:
+    cmd: python src\Components\Model_Building\ModelBuilding.py
+    deps:
+    - path: Artifacts/
+      hash: md5
+      md5: 5d6aa93d839b9b26ca84df9eb28c0448.dir
+      size: 741207
+      nfiles: 3
+    - path: src\Components\Model_Building\ModelBuilding.py
+      hash: md5
+      md5: e9f9260980d20773adcf0223f8cba024
+      size: 9592
+  Evaluation:
+    cmd: python src\Components\ModelEvaluation\ModelEvaluation.py
+    deps:
+    - path: Artifacts/
+      hash: md5
+      md5: 5d6aa93d839b9b26ca84df9eb28c0448.dir
+      size: 741207
+      nfiles: 3
+    - path: src\Components\ModelEvaluation\ModelEvaluation.py
+      hash: md5
+      md5: 13c7cfae82d619ad3728b77809347760
+      size: 4513
+  Pusher:
+    cmd: python src\Components\ModelPusher\ModelPusher.py
+    deps:
+    - path: Artifacts/
+      hash: md5
+      md5: 5d6aa93d839b9b26ca84df9eb28c0448.dir
+      size: 741207
+      nfiles: 3
+    - path: src\Components\ModelPusher\ModelPusher.py
+      hash: md5
+      md5: ea1043a43c010a54323a146e7e43dd40
+      size: 2239
