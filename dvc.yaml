@@ -1,0 +1,36 @@
+stages:
+  DataIngestion:
+    cmd: python src\Components\DataIngestion\DataIngestion.py
+    deps:
+      - src\Components\DataIngestion\DataIngestion.py
+    outs:
+      - Artifacts/  
+  DataValidation:
+    cmd: python src\Components\DataValidation\DataValidation.py
+    deps:
+      - src\Components\DataValidation\DataValidation.py
+      - Artifacts/
+
+  DataTransformation:
+    cmd: python src\Components\DataTransformation\DataTransformation.py
+    deps:
+      - src\Components\DataTransformation\DataTransformation.py
+      - Artifacts/
+
+  ModelTrainer:
+    cmd: python src\Components\Model_Building\ModelBuilding.py
+    deps:
+      - src\Components\Model_Building\ModelBuilding.py
+      - Artifacts/
+
+  Evaluation:
+    cmd: python src\Components\ModelEvaluation\ModelEvaluation.py
+    deps:
+      - src\Components\ModelEvaluation\ModelEvaluation.py
+      - Artifacts/
+
+  Pusher:
+    cmd: python src\Components\ModelPusher\ModelPusher.py
+    deps:
+      - src\Components\ModelPusher\ModelPusher.py
+      - Artifacts/
