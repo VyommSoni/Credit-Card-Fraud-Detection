@@ -42,3 +42,46 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+# ================= CD STAGE: DEPLOY TO EC2 =================
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build-and-push # Ensures deployment only happens if the build succeeds
+
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: SSH into EC2 and Deploy Container
+      uses: appleboy/ssh-action@v1.0.3
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        envs: ECR_REGISTRY, ECR_REPOSITORY, IMAGE_TAG, AWS_REGION
+        script: |
+          # 1. Login to ECR inside the EC2 instance
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+          # 2. Stop and remove the old container if it exists (avoids port conflicts)
+          docker stop creditcardfraud-app || true
+          docker rm creditcardfraud-app || true
+
+          # 3. Pull the latest image from ECR
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+          # 4. Run the new container (adjust container port mapping -e.g., 80:80 or 5000:5000- as needed)
+          docker run -d --name creditcardfraud-app -p 80:80 $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+          # 5. Clean up old unused images to save disk space on EC2
+          docker image prune -f

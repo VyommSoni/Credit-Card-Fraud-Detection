@@ -4,7 +4,6 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
-# 🛠️ FIX: Fixed typo in module name path ("PredictionPipepline" -> "prediction_pipeline")
 from src.Pipeline.PredictionPipeline.PredictionPipepline import PredictionPipeline
 from src.Exception.fraud_exception import CreditCradFraudDetection
 from src.Logging.fraud_logging import logging
